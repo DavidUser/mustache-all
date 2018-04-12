@@ -10,6 +10,15 @@ result_path = 'result'
 data_path = 'document'
 
 def yaml_loader(path, context = {}):
+    if os.path.isfile(path):
+        partial_document = yaml.load(open(path, 'r'))
+        if isinstance(context, list):
+            context += [partial_document]
+        else:
+            context.update(partial_document)
+
+        return context
+
     for resource in os.listdir(path):
         resource_path = os.path.join(path, resource)
 
@@ -22,18 +31,16 @@ def yaml_loader(path, context = {}):
                 document = {}
                 context += [document]
                 yaml_loader(resource_path, document)
+        else:
+            yaml_loader(resource_path, context)
 
-
-        if os.path.isfile(resource_path):
-            partial_document = yaml.load(open(resource_path, 'r'))
-            if isinstance(context, list):
-                context += [partial_document]
-            else:
-                context.update(partial_document)
     return context
 
 document = yaml_loader(data_path)
+print('\nUsing data: ')
 __import__('pprint').pprint(document)
+print('\n')
+
 mustache_pattern = re.compile(r'__([^_]+)__')
 
 def mustache_directory_apply(path, context):
