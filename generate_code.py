@@ -54,8 +54,9 @@ def mustache_directory_apply(path, context):
     for resource in os.listdir(path):
         resource_path = os.path.join(path, resource)
         extended_mustache_name = mustache_pattern.search(resource)
-        mustache_name = extended_mustache_name.group(1) if extended_mustache_name != None else resource
-        _, context = extended_mustache_solve_context(mustache_name, context)
+        if extended_mustache_name != None:
+            mustache_name = extended_mustache_name.group(1) if extended_mustache_name != None else resource
+            _, context = extended_mustache_solve_context(mustache_name, context)
 
         for context_item in (context if isinstance(context, list) else [context]):
             context = context_item
