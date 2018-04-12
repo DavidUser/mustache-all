@@ -1,0 +1,6 @@
+Name: Animal
+child:
+  - Name: Dog
+    id: 0
+  - Name: Cat
+    id: 1

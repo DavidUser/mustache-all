@@ -4,9 +4,9 @@ import re
 import yaml
 import pystache
 
-template_path = 'bullshit'
-result_path = 'life_time_saved'
-data_path = 'what_matters/main.yaml'
+template_path = 'test'
+result_path = 'result'
+data_path = 'document.yaml'
 
 file_stream = open(data_path, 'r')
 document = yaml.load(file_stream)
