@@ -1,1 +1,7 @@
 I'm the {{Name}} number {{id}}.
+I hunt: 
+{{#prey}}
+ - {{Name}} 
+{{/prey}}
+
+my weight is {{weight}}

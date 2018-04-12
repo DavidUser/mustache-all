@@ -3,14 +3,37 @@ import os
 import re
 import yaml
 import pystache
+import collections
 
 template_path = 'test'
 result_path = 'result'
-data_path = 'document.yaml'
+data_path = 'document'
 
-file_stream = open(data_path, 'r')
-document = yaml.load(file_stream)
+def yaml_loader(path, context = {}):
+    for resource in os.listdir(path):
+        resource_path = os.path.join(path, resource)
 
+        if os.path.isdir(resource_path):
+            if isinstance(context, dict):
+                if context.__contains__(resource) == False:
+                    context[resource] = [] 
+                yaml_loader(resource_path, context[resource])
+            else:
+                document = {}
+                context += [document]
+                yaml_loader(resource_path, document)
+
+
+        if os.path.isfile(resource_path):
+            partial_document = yaml.load(open(resource_path, 'r'))
+            if isinstance(context, list):
+                context += [partial_document]
+            else:
+                context.update(partial_document)
+    return context
+
+document = yaml_loader(data_path)
+__import__('pprint').pprint(document)
 mustache_pattern = re.compile(r'__([^_]+)__')
 
 def mustache_directory_apply(path, context):
