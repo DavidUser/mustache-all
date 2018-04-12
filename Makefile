@@ -1,5 +1,5 @@
-all: ./generate_code.py clean
-	python3 $<
+all: ./generate_code.py test document result | clean
+	python3 $^
 
 clean:
 	-rm -r result/*

@@ -4,10 +4,17 @@ import re
 import yaml
 import pystache
 import collections
+import argparse
 
-template_path = 'test'
-result_path = 'result'
-data_path = 'document'
+parser = argparse.ArgumentParser(description='Generate text based on Mustache extended templates.')
+parser.add_argument('template', type=str, help='Path to template directory')
+parser.add_argument('data', type=str, help='Path to data used to fill based on templates')
+parser.add_argument('result', type=str, help='Path where the generate files or directories will be placed')
+
+args = parser.parse_args()
+template_path = args.template
+data_path = args.data
+result_path = args.result
 
 def yaml_loader(path, context = {}):
     if os.path.isfile(path):
