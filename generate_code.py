@@ -5,6 +5,7 @@ import yaml
 import pystache
 import collections
 import argparse
+import copy
 
 parser = argparse.ArgumentParser(description='Generate text based on Mustache extended templates.')
 parser.add_argument('template', type=str, help='Path to template directory')
@@ -50,27 +51,32 @@ print('\n')
 
 mustache_pattern = re.compile(r'__([^_]+)__')
 
-def mustache_directory_apply(path, context):
+def mustache_directory_apply(path, context, directory = copy.deepcopy(result_path)):
+    print(' >>>>>>>>>>>>>>>>>>> ' + path)
+    print(context)
     for resource in os.listdir(path):
         resource_path = os.path.join(path, resource)
         extended_mustache_name = mustache_pattern.search(resource)
         if extended_mustache_name != None:
             mustache_name = extended_mustache_name.group(1) if extended_mustache_name != None else resource
-            _, context = extended_mustache_solve_context(mustache_name, context)
+            key, context = extended_mustache_solve_context(mustache_name, context)
+            resource = resource.replace(extended_mustache_name.group(), '__' + key + '__')
 
         for context_item in (context if isinstance(context, list) else [context]):
-            context = context_item
-            generated_name = solve_extended_mustache(resource, context)
-            generated_directory = mustache_path_apply(path.replace(template_path, result_path), document)
-            generated_path = os.path.join(generated_directory, generated_name)
+            context_item = context_item
+            generated_name = solve_extended_mustache(resource, context_item)
+            generated_path = os.path.join(directory, generated_name)
 
             if os.path.isfile(resource_path):
                 print('[Generated file] \t%s' % generated_path)
-                mustache_file_apply(resource_path, generated_path, context)
+                mustache_file_apply(resource_path, generated_path, context_item)
             else:
                 print('[Created directory] \t%s' % generated_path)
+                if generated_path == 'life_time_saved/src/SchemeRepository/Tables/Visa':
+                    __import__('pdb').set_trace()
                 os.makedirs(generated_path)
-                mustache_directory_apply(resource_path, context)
+                new_directory = os.path.join(directory, generated_name)
+                mustache_directory_apply(resource_path, context_item, new_directory)
 
 def mustache_path_apply(path, context):
     final_path = []
@@ -81,6 +87,7 @@ def mustache_path_apply(path, context):
     return os.path.join(*final_path)
 
 def solve_extended_mustache(resource, context):
+    context = copy.deepcopy(context)
     mustache_on_file = mustache_pattern.search(resource)
     last_context = None
     while mustache_on_file != None:

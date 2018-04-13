@@ -2,3 +2,5 @@ Name: Animal
 child:
   - Name: Elephant
     id: 3
+    prey:
+      - Name: Mouse
