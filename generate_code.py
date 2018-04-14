@@ -94,13 +94,14 @@ def extended_mustache_solve_context(name, context):
     return value, context
 
 
-def flat_globalize(context, global_context = dict(), prefix = ''):
+def flat_globalize(context, global_context = dict(), prefix = 'context'):
     if isinstance(context, dict):
         for k, v in context.items():
-            global_context[prefix + '.' + k] = v
+            global_context[prefix + '/' + k] = v
 
         for k, v in context.items():
-            flat_globalize(v, global_context, prefix + '.' + k)
+            flat_globalize(v, global_context, prefix + '/' + k)
+        context['context/'] = prefix
 
     if isinstance(context, list):
         for item in context:
@@ -132,9 +133,5 @@ __import__('pprint').pprint(document)
 print('\n')
 
 flat_globalize(document)
-
-print('\nUsing globalized data: ')
-__import__('pprint').pprint(document)
-print('\n')
 
 mustache_directory_apply(template_path, document, result_path)

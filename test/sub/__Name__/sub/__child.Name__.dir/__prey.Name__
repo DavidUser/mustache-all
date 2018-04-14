@@ -1,1 +1,2 @@
-I'm a {{Name}} and my hunter is a {{.child.Name}}
+{{context/}}
+I'm a {{Name}} ({{context/child/prey/Name}}) and my hunter is a {{context/child/Name}}
